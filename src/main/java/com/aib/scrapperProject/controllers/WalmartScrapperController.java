@@ -21,4 +21,8 @@ public class WalmartScrapperController {
         return new ResponseEntity<>(service.startWalmartSearch(product, limit, page, sorting), HttpStatus.OK);
     }
 
+    @GetMapping("/WalmartSearcher/SV")
+    public ResponseEntity<String> callPharma(){
+        return new ResponseEntity<>(service.pharmaWalmartSV(), HttpStatus.OK);
+    }
 }
