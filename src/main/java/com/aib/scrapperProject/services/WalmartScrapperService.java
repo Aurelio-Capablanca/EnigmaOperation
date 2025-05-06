@@ -1,39 +1,25 @@
 package com.aib.scrapperProject.services;
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
+import com.aib.scrapperProject.model.WalmartModels.ProductCatalog;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class WalmartScrapperService {
 
     private final AbstractionClient client;
+    private final ObjectMapper mapper;
 
-    public void searchProducts(String product, String limit, String page, String sorting){
-        try {
-            String url = new StringBuilder().append("search?q=").append(product)
-                    .append("&sort=").append(sorting)//price_low
-                    .append("&page=").append(page)//1
-                    .append("&affinityOverride=default")
-                    .toString();
-            System.out.println(url);
-            client.normalizedURLRequester(url);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-
-    public String startWalmartSearch(String product, String limit, String page, String sorting){
+    public String startWalmartSearch(String product, String limit, String page, String sorting) {
         final WebDriver driver = client.setBrowserMimic();
         String query = new StringBuilder().append("search?q=").append(product)
                 .append("&sort=").append(sorting)//price_low
@@ -46,9 +32,7 @@ public class WalmartScrapperService {
             String url = "https://www.walmart.com/" + query;
             System.out.println("URL: " + url);
             driver.get(url);
-            // Wait for page to load
-            //driver.wait(5000);
-            Thread.sleep(5000); // You can switch to WebDriverWait later
+            Thread.sleep(5000);
             html = driver.getPageSource();
         } catch (Exception e) {
             html = "Error: " + e.getMessage();
@@ -59,25 +43,45 @@ public class WalmartScrapperService {
         return html;
     }
 
-    public String pharmaWalmartSV(){
+    public List<ProductCatalog> pharmaWalmartInitialPageSV(String page) {
         final WebDriver driver = client.setBrowserMimic();
-        //https://www.walmart.com.sv/farmacia?page=1
-        String html = "";
+        List<ProductCatalog> catalog = new ArrayList<>();
         try {
-            String url = "https://www.walmart.com.sv/farmacia?page=1";
+            String url = "https://www.walmart.com.sv/farmacia?page=" + page;
             System.out.println("URL: " + url);
             driver.get(url);
-            // Wait for page to load
-            //driver.wait(5000);
-            Thread.sleep(5000); // You can switch to WebDriverWait later
-            html = driver.getPageSource();
+            Thread.sleep(5000);
+            String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
+            if (jsonLD == null) return Collections.emptyList();
+            jsonLD = jsonLD.replaceAll("@", "");
+            System.out.println(jsonLD);
+            JsonNode root = mapper.readTree(jsonLD).path("itemListElement");
+            catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
+            }).readValue(root);
         } catch (Exception e) {
-            html = "Error: " + e.getMessage();
+            throw new RuntimeException(e);
         } finally {
             driver.quit();
         }
-        System.out.println(html);
-        return html;
+        return catalog;
     }
+
+
+    public String pharmaWalmartSearchProducts(String productSearch) {
+        final WebDriver driver = client.setBrowserMimic();
+        String middleMan = "";
+        try {
+            final StringBuilder concats = new StringBuilder().append("https://www.walmart.com.sv/")
+                    .append(productSearch).append("?_q=").append(productSearch).append("&map=ft");
+            driver.get(concats.toString());
+            middleMan = driver.getPageSource();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            driver.quit();
+        }
+        return middleMan;
+    }
+
 
 }
