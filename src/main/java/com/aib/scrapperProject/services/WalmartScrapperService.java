@@ -50,7 +50,7 @@ public class WalmartScrapperService {
             String url = "https://www.walmart.com.sv/farmacia?page=" + page;
             System.out.println("URL: " + url);
             driver.get(url);
-            Thread.sleep(5000);
+           // Thread.sleep(5000);
             String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
             if (jsonLD == null) return Collections.emptyList();
             jsonLD = jsonLD.replaceAll("@", "");
@@ -75,6 +75,17 @@ public class WalmartScrapperService {
                     .append(productSearch).append("?_q=").append(productSearch).append("&map=ft");
             driver.get(concats.toString());
             middleMan = driver.getPageSource();
+
+            String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
+            if (jsonLD == null) return "";
+            jsonLD = jsonLD.replaceAll("@", "");
+            System.out.println(jsonLD);
+            JsonNode root = mapper.readTree(jsonLD).path("itemListElement");
+
+            List<ProductCatalog> catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
+            }).readValue(root);
+            System.out.println("Content : "+catalog);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
