@@ -14,7 +14,7 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class WalmartScrapperService {
+public class BigMartOneServices {
 
     private final AbstractionClient client;
     private final ObjectMapper mapper;
@@ -40,6 +40,18 @@ public class WalmartScrapperService {
         return catalog;
     }
 
+    public List<ProductCatalog> pharmaWalmartInitialPageSV(String page) {
+        String url = "https://www.walmart.com.sv/farmacia?page=" + page;
+        return genericProcessorWalmart(url);
+    }
+
+
+    public List<ProductCatalog> pharmaWalmartSearchProducts(String productSearch) {
+        final String url = new StringBuilder().append("https://www.walmart.com.sv/")
+                .append(productSearch).append("?_q=").append(productSearch).append("&map=ft").toString();
+        return genericProcessorWalmart(url);
+    }
+
     public String startWalmartSearch(String product, String limit, String page, String sorting) {
         final WebDriver driver = client.setBrowserMimic();
         String query = new StringBuilder().append("search?q=").append(product)
@@ -63,18 +75,5 @@ public class WalmartScrapperService {
         System.out.println(html);
         return html;
     }
-
-    public List<ProductCatalog> pharmaWalmartInitialPageSV(String page) {
-        String url = "https://www.walmart.com.sv/farmacia?page=" + page;
-        return genericProcessorWalmart(url);
-    }
-
-
-    public List<ProductCatalog> pharmaWalmartSearchProducts(String productSearch) {
-        final StringBuilder concats = new StringBuilder().append("https://www.walmart.com.sv/")
-                .append(productSearch).append("?_q=").append(productSearch).append("&map=ft");
-        return genericProcessorWalmart(concats.toString());
-    }
-
 
 }

@@ -1,7 +1,7 @@
 package com.aib.scrapperProject.controllers;
 
 import com.aib.scrapperProject.model.WalmartModels.ProductCatalog;
-import com.aib.scrapperProject.services.WalmartScrapperService;
+import com.aib.scrapperProject.services.BigMartOneServices;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
-public class WalmartScrapperController {
+public class BigMartOneController {
 
-    private final WalmartScrapperService service;
+    private final BigMartOneServices service;
 
     @GetMapping("/WalmartSearcher/{product}/{limit}/{page}/{sorting}")
     public ResponseEntity<String> callScrapper(@PathVariable String product, @PathVariable String limit, @PathVariable String page, @PathVariable String sorting) {
