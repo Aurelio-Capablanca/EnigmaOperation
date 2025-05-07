@@ -30,7 +30,7 @@ public class WalmartScrapperController {
     }
 
     @GetMapping("/WalmartSearcher-Pharma/search-term/{product}")
-    public ResponseEntity<String> searchPharma(@PathVariable String product){
+    public ResponseEntity<List<ProductCatalog>> searchPharma(@PathVariable String product){
         return new ResponseEntity<>(service.pharmaWalmartSearchProducts(product), HttpStatus.OK);
     }
 }

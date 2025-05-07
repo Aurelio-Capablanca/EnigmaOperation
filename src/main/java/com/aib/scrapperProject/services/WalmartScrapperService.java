@@ -19,6 +19,27 @@ public class WalmartScrapperService {
     private final AbstractionClient client;
     private final ObjectMapper mapper;
 
+    private List<ProductCatalog> genericProcessorWalmart(String url) {
+        final WebDriver driver = client.setBrowserMimic();
+        List<ProductCatalog> catalog = new ArrayList<>();
+        try {
+            System.out.println("URL: " + url);
+            driver.get(url);
+            String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
+            if (jsonLD == null) return Collections.emptyList();
+            jsonLD = jsonLD.replaceAll("@", "");
+            System.out.println(jsonLD);
+            JsonNode root = mapper.readTree(jsonLD).path("itemListElement");
+            catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
+            }).readValue(root);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            driver.quit();
+        }
+        return catalog;
+    }
+
     public String startWalmartSearch(String product, String limit, String page, String sorting) {
         final WebDriver driver = client.setBrowserMimic();
         String query = new StringBuilder().append("search?q=").append(product)
@@ -44,54 +65,15 @@ public class WalmartScrapperService {
     }
 
     public List<ProductCatalog> pharmaWalmartInitialPageSV(String page) {
-        final WebDriver driver = client.setBrowserMimic();
-        List<ProductCatalog> catalog = new ArrayList<>();
-        try {
-            String url = "https://www.walmart.com.sv/farmacia?page=" + page;
-            System.out.println("URL: " + url);
-            driver.get(url);
-           // Thread.sleep(5000);
-            String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
-            if (jsonLD == null) return Collections.emptyList();
-            jsonLD = jsonLD.replaceAll("@", "");
-            System.out.println(jsonLD);
-            JsonNode root = mapper.readTree(jsonLD).path("itemListElement");
-            catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
-            }).readValue(root);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            driver.quit();
-        }
-        return catalog;
+        String url = "https://www.walmart.com.sv/farmacia?page=" + page;
+        return genericProcessorWalmart(url);
     }
 
 
-    public String pharmaWalmartSearchProducts(String productSearch) {
-        final WebDriver driver = client.setBrowserMimic();
-        String middleMan = "";
-        try {
-            final StringBuilder concats = new StringBuilder().append("https://www.walmart.com.sv/")
-                    .append(productSearch).append("?_q=").append(productSearch).append("&map=ft");
-            driver.get(concats.toString());
-            middleMan = driver.getPageSource();
-
-            String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
-            if (jsonLD == null) return "";
-            jsonLD = jsonLD.replaceAll("@", "");
-            System.out.println(jsonLD);
-            JsonNode root = mapper.readTree(jsonLD).path("itemListElement");
-
-            List<ProductCatalog> catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
-            }).readValue(root);
-            System.out.println("Content : "+catalog);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            driver.quit();
-        }
-        return middleMan;
+    public List<ProductCatalog> pharmaWalmartSearchProducts(String productSearch) {
+        final StringBuilder concats = new StringBuilder().append("https://www.walmart.com.sv/")
+                .append(productSearch).append("?_q=").append(productSearch).append("&map=ft");
+        return genericProcessorWalmart(concats.toString());
     }
 
 
