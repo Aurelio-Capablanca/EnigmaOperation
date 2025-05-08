@@ -1,7 +1,7 @@
 package com.aib.scrapperProject.services;
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
-import com.aib.scrapperProject.model.WalmartModels.ProductCatalog;
+import com.aib.scrapperProject.model.walmartModels.ProductCatalog;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

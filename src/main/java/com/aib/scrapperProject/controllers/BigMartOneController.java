@@ -1,6 +1,6 @@
 package com.aib.scrapperProject.controllers;
 
-import com.aib.scrapperProject.model.WalmartModels.ProductCatalog;
+import com.aib.scrapperProject.model.walmartModels.ProductCatalog;
 import com.aib.scrapperProject.services.BigMartOneServices;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -2,15 +2,14 @@ package com.aib.scrapperProject.services;
 
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.aib.scrapperProject.model.pharmaOneModels.PharmaOneModel;
 import lombok.AllArgsConstructor;
-import org.jsoup.nodes.Element;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.stereotype.Service;
 
-import javax.xml.transform.Source;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,51 +17,30 @@ import java.util.List;
 public class PharmaOneServices {
 
     private final AbstractionClient client;
-    private final ObjectMapper mapper;
 
-    private String genericProcessorPharma() {
+    public List<PharmaOneModel> SearchByTerm(String termToSearch) {
         final WebDriver driver = client.setBrowserMimic();
-        String html = "";
+        final List<PharmaOneModel> pharmaOne = new ArrayList<>();
         try {
-            final String url = "https://www.farmaciasannicolas.com/productos/keyword/acetaminofen";
-            System.out.println("URL : "+url);
-            /*
-            <div class="products-list-grid">
-            <div class="product-item">
-            <div class="product-item-box">
-            */
+            final String url = "https://www.farmaciasannicolas.com/productos/keyword/"+termToSearch;// acetaminofen
+            System.out.println("URL : " + url);
             driver.get(url);
-            html = driver.getPageSource();
-            String content = driver.findElement(By.xpath("//div[@class='products-list-grid']")).getAttribute("innerHTML");
-            List<WebElement> toJson = driver.findElements(By.xpath("//div[@class='product-item-box']"));
-            System.out.println(toJson.size());
+            final List<WebElement> toJson = driver.findElements(By.xpath("//div[@class='product-item-box']"));
             toJson.forEach(value -> {
-                System.out.println("Element : "+value.getAttribute("innerHTML"));
-                WebElement image = value.findElement(By.cssSelector("figure > a > img"));
-                System.out.println("Image : "+image.getAttribute("src"));
-                WebElement name = value.findElement(By.cssSelector(".prod-info .prod-name a"));
-                System.out.println("Name : "+name.getText());
-                /*
-                <div class="prices-top" b-w4r1jh9uvl="">
-                <span class="before" b-w4r1jh9uvl="">$0.65</span>
-                <strong class="price" b-w4r1jh9uvl="">$0.52</strong>
-                </div>
-                **/
-                WebElement priceStart = value.findElement(By.cssSelector(".prices-top .before"));
-                System.out.println("Starter Price : "+priceStart.getText());
-                WebElement priceEnd = value.findElement(By.cssSelector(".prices-top .price"));
-                System.out.println("End Price : "+priceEnd.getText());
+                pharmaOne.add(PharmaOneModel.builder()
+                        .image(value.findElement(By.cssSelector("figure > a > img")).getText())
+                        .name(value.findElement(By.cssSelector(".prod-info .prod-name a")).getText())
+                                .starterPrice(value.findElement(By.xpath("//div[@class='prices-top']//span[@class='before']")).getText())
+                                .price(value.findElement(By.xpath("//div[@class='prices-top']//strong[@class='price']")).getText())
+                        .build());
             });
+            pharmaOne.forEach(System.out::println);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         } finally {
             driver.close();
         }
-        return html;
-    }
-
-    public String pharmaOneSearchByTerm(){
-        return genericProcessorPharma();
+        return pharmaOne;
     }
 
 }

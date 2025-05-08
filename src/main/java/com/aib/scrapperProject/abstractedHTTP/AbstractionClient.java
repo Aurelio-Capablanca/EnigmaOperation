@@ -11,23 +11,26 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class AbstractionClient {
 
-    public void normalizedURLRequester(String url) throws IOException {
+    public String normalizedURLRequester(String url, String method, String body) throws IOException {
         AsyncHttpClient client = new DefaultAsyncHttpClient();
-        client.prepare("GET", "https://www.walmart.com/" + url)
+        AtomicReference<String> content = new AtomicReference<>();
+        client.prepare(method.toUpperCase(),  url)
                 .setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0 Safari/537.36")
                 .setHeader("Accept-Language", "en-US,en;q=0.9")
-                .setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                .setHeader("Content-Type", "application/json")
+                .setBody(body)
                 .setFollowRedirect(true)
                 .execute()
                 .toCompletableFuture()
-                .thenAccept(System.out::println)
+                .thenAccept(result -> content.set(result.getResponseBody()))
                 .join();
-
         client.close();
+        return content.get();
     }
 
     public WebDriver setBrowserMimic() {
