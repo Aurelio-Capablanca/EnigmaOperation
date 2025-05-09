@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -32,10 +34,8 @@ public class PharmaTwoServices {
                 "        \"TamanoPagina\": 12\n" +
                 "    }";
         final String url = "https://www.farmaciaseconomicaselsalvador.com/PROD/ECOMMERCE/API/Articulo/ObtenerArticulosPorNombre";
-        String html = "";
-
+        String html;
         try {
-            //https://www.farmaciaseconomicaselsalvador.com/PROD/ECOMMERCE/API/Articulo/ObtenerArticulosPorNombre
             html = client.normalizedURLRequester(url, "POST", body);
         } catch (IOException e) {
             throw new RuntimeException(e);
