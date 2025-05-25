@@ -1,7 +1,7 @@
 package com.aib.scrapperProject.controllers;
 
 
-import com.aib.scrapperProject.services.PharmaTwoServices;
+import com.aib.scrapperProject.domainLogic.services.PharmaTwoServices;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

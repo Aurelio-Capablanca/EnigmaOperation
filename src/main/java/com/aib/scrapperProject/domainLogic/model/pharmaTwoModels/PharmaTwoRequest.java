@@ -1,4 +1,4 @@
-package com.aib.scrapperProject.model.pharmaTwoModels;
+package com.aib.scrapperProject.domainLogic.model.pharmaTwoModels;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,15 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class PharmaTwoRequest {
-
-    /*
-    {
-        "ArticuloNombre": "acetaminofen",
-        "Ordenamiento": 0,
-        "Pagina": 1,
-        "TamanoPagina": 12
-    }
-    **/
 
     private String name;
     private Integer sorting;

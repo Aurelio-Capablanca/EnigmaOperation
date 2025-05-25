@@ -1,7 +1,8 @@
-package com.aib.scrapperProject.services;
+package com.aib.scrapperProject.domainLogic.services;
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
-import com.aib.scrapperProject.model.walmartModels.ProductCatalog;
+import com.aib.scrapperProject.configurations.RedisManager;
+import com.aib.scrapperProject.domainLogic.model.walmartModels.ProductCatalog;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,10 +19,11 @@ public class BigMartOneServices {
 
     private final AbstractionClient client;
     private final ObjectMapper mapper;
+    private final RedisManager manager;
 
     private List<ProductCatalog> genericProcessorWalmart(String url) {
         final WebDriver driver = client.setBrowserMimic();
-        List<ProductCatalog> catalog = new ArrayList<>();
+        List<ProductCatalog> catalog;
         try {
             System.out.println("URL: " + url);
             driver.get(url);
@@ -41,8 +43,10 @@ public class BigMartOneServices {
     }
 
     public List<ProductCatalog> pharmaWalmartInitialPageSV(String page) {
-        String url = "https://www.walmart.com.sv/farmacia?page=" + page;
-        return genericProcessorWalmart(url);
+        final String url = "https://www.walmart.com.sv/farmacia?page=" + page;
+        final List<ProductCatalog> catalog = genericProcessorWalmart(url);
+        manager.saveContent(url, catalog.toString(), 500000);
+        return catalog;
     }
 
 
@@ -60,7 +64,7 @@ public class BigMartOneServices {
                 .append("&affinityOverride=default")
                 .toString();
 
-        String html = "";
+        String html;
         try {
             String url = "https://www.walmart.com/" + query;
             System.out.println("URL: " + url);

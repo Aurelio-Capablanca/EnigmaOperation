@@ -1,7 +1,7 @@
 package com.aib.scrapperProject.controllers;
 
-import com.aib.scrapperProject.model.walmartModels.ProductCatalog;
-import com.aib.scrapperProject.services.BigMartOneServices;
+import com.aib.scrapperProject.domainLogic.model.walmartModels.ProductCatalog;
+import com.aib.scrapperProject.domainLogic.services.BigMartOneServices;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

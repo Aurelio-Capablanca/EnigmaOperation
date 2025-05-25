@@ -1,7 +1,7 @@
 package com.aib.scrapperProject.controllers;
 
-import com.aib.scrapperProject.model.pharmaOneModels.PharmaOneModel;
-import com.aib.scrapperProject.services.PharmaOneServices;
+import com.aib.scrapperProject.domainLogic.model.pharmaOneModels.PharmaOneModel;
+import com.aib.scrapperProject.domainLogic.services.PharmaOneServices;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

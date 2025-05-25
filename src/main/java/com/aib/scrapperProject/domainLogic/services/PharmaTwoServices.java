@@ -1,4 +1,4 @@
-package com.aib.scrapperProject.services;
+package com.aib.scrapperProject.domainLogic.services;
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
 import lombok.AllArgsConstructor;

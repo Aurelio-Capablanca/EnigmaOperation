@@ -1,4 +1,4 @@
-package com.aib.scrapperProject.model.walmartModels;
+package com.aib.scrapperProject.domainLogic.model.walmartModels;
 
 import lombok.Data;
 

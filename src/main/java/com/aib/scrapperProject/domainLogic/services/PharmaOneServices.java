@@ -1,8 +1,8 @@
-package com.aib.scrapperProject.services;
+package com.aib.scrapperProject.domainLogic.services;
 
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
-import com.aib.scrapperProject.model.pharmaOneModels.PharmaOneModel;
+import com.aib.scrapperProject.domainLogic.model.pharmaOneModels.PharmaOneModel;
 import lombok.AllArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

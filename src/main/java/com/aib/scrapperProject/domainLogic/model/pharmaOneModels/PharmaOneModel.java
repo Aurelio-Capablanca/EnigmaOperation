@@ -1,4 +1,4 @@
-package com.aib.scrapperProject.model.pharmaOneModels;
+package com.aib.scrapperProject.domainLogic.model.pharmaOneModels;
 
 import lombok.Builder;
 import lombok.Data;
