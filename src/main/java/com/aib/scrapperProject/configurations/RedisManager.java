@@ -3,6 +3,8 @@ package com.aib.scrapperProject.configurations;
 import org.springframework.context.annotation.Configuration;
 import redis.clients.jedis.JedisPooled;
 
+import java.util.Optional;
+
 @Configuration
 public class RedisManager {
 
@@ -17,8 +19,8 @@ public class RedisManager {
         jedis.setex(url,timeInSeconds, content);
     }
 
-    public String getContent(String url){
-        return jedis.get(url);
+    public Optional<String> getContent(String url){
+        return Optional.ofNullable(jedis.get(url));
     }
 
     public boolean isContentChanged(String url, String newObject){

@@ -19,10 +19,10 @@ public class BigMartOneController {
 
     private final BigMartOneServices service;
 
-    @GetMapping("/WalmartSearcher/{product}/{limit}/{page}/{sorting}")
-    public ResponseEntity<String> callScrapper(@PathVariable String product, @PathVariable String limit, @PathVariable String page, @PathVariable String sorting) {
-        return new ResponseEntity<>(service.startWalmartSearch(product, limit, page, sorting), HttpStatus.OK);
-    }
+//    @GetMapping("/WalmartSearcher/{product}/{limit}/{page}/{sorting}")
+//    public ResponseEntity<String> callScrapper(@PathVariable String product, @PathVariable String limit, @PathVariable String page, @PathVariable String sorting) {
+//        return new ResponseEntity<>(service.startWalmartSearch(product, limit, page, sorting), HttpStatus.OK);
+//    }
 
     @GetMapping("/WalmartSearcher-Pharma/index-pageable/{page}")
     public ResponseEntity<List<ProductCatalog>> callPharma(@PathVariable String page){

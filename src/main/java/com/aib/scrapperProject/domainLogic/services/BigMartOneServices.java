@@ -3,6 +3,7 @@ package com.aib.scrapperProject.domainLogic.services;
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
 import com.aib.scrapperProject.configurations.RedisManager;
 import com.aib.scrapperProject.domainLogic.model.walmartModels.ProductCatalog;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -19,13 +21,25 @@ public class BigMartOneServices {
 
     private final AbstractionClient client;
     private final ObjectMapper mapper;
-    private final RedisManager manager;
+    private final RedisManager redisManager;
 
     private List<ProductCatalog> genericProcessorWalmart(String url) {
+        System.out.println("URL: " + url);
+        final Optional<String> content = redisManager.getContent(url);
+        if (content.isPresent()){
+            final String root = content.get();
+            System.out.println("Content Got: "+root);
+            try {
+                JsonNode node = mapper.readTree(root).path("itemListElement");
+                return mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
+                }).readValue(node);
+            } catch (IOException e) {
+                throw new RuntimeException (e);
+            }
+        }
         final WebDriver driver = client.setBrowserMimic();
-        List<ProductCatalog> catalog;
+        final List<ProductCatalog> catalog;
         try {
-            System.out.println("URL: " + url);
             driver.get(url);
             String jsonLD = driver.findElement(By.xpath("//div[@class='flex flex-column min-vh-100 w-100']//script[@type='application/ld+json']")).getAttribute("innerHTML");
             if (jsonLD == null) return Collections.emptyList();
@@ -34,6 +48,8 @@ public class BigMartOneServices {
             JsonNode root = mapper.readTree(jsonLD).path("itemListElement");
             catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
             }).readValue(root);
+            redisManager.saveContent(url, jsonLD, 172800);
+            redisManager.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -44,9 +60,7 @@ public class BigMartOneServices {
 
     public List<ProductCatalog> pharmaWalmartInitialPageSV(String page) {
         final String url = "https://www.walmart.com.sv/farmacia?page=" + page;
-        final List<ProductCatalog> catalog = genericProcessorWalmart(url);
-        manager.saveContent(url, catalog.toString(), 500000);
-        return catalog;
+        return genericProcessorWalmart(url);
     }
 
 
