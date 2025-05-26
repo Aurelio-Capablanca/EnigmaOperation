@@ -49,7 +49,7 @@ public class BigMartOneServices {
             catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
             }).readValue(root);
             redisManager.saveContent(url, jsonLD, 172800);
-            redisManager.close();
+            //redisManager.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
