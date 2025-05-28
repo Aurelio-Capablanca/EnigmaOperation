@@ -50,7 +50,6 @@ public class PharmaTwoServices {
             }).readValue(node);
             System.out.println("Parsed : "+catalog);
             redisManager.saveContent(url, node.toString(), 172800);
-            //redisManager.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

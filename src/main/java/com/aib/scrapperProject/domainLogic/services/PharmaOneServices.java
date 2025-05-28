@@ -55,7 +55,6 @@ public class PharmaOneServices {
             System.out.println("Content : " + pharmaOne);
             final String content = mapper.writeValueAsString(pharmaOne);
             redisManager.saveContent(url, content, 172800);
-            //redisManager.close();
         } catch (RuntimeException | JsonProcessingException e) {
             throw new RuntimeException(e);
         } finally {

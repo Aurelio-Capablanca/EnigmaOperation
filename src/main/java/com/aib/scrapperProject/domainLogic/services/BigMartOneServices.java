@@ -3,7 +3,6 @@ package com.aib.scrapperProject.domainLogic.services;
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
 import com.aib.scrapperProject.configurations.RedisManager;
 import com.aib.scrapperProject.domainLogic.model.walmartModels.ProductCatalog;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +48,6 @@ public class BigMartOneServices {
             catalog = mapper.readerFor(new TypeReference<List<ProductCatalog>>() {
             }).readValue(root);
             redisManager.saveContent(url, jsonLD, 172800);
-            //redisManager.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
