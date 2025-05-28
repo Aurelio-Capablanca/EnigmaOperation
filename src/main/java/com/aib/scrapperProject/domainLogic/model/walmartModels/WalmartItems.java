@@ -14,6 +14,6 @@ public class WalmartItems {
     private String description;
     private String mpn;
     private String sku;
-
+    private WalmartOffers offers;
 
 }

@@ -2,6 +2,8 @@ package com.aib.scrapperProject.domainLogic.services;
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
 import com.aib.scrapperProject.configurations.RedisManager;
+import com.aib.scrapperProject.domainLogic.model.GlobalCatalog;
+import com.aib.scrapperProject.domainLogic.model.pharmaOneModels.PharmaOneModel;
 import com.aib.scrapperProject.domainLogic.model.pharmaTwoModels.ProductsPharmaTwo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,16 @@ public class PharmaTwoServices {
     private final AbstractionClient client;
     private final ObjectMapper mapper;
     private final RedisManager redisManager;
+
+    private List<GlobalCatalog> translateFromFarmaciaEconomicas(List<ProductsPharmaTwo> origin) {
+        final List<GlobalCatalog> catalog = new ArrayList<>();
+        origin.forEach(eco -> catalog.add(GlobalCatalog.builder()
+                .imageURL(eco.getURLImagen())
+                .priceProduct(eco.getPrecio())
+                .nameProduct(eco.getNombre()).build()));
+        return catalog;
+    }
+
 
     public List<ProductsPharmaTwo> searchByTerm(String argument, int order, int page, int size) {
         final String url = "https://www.farmaciaseconomicaselsalvador.com/PROD/ECOMMERCE/API/Articulo/ObtenerArticulosPorNombre";

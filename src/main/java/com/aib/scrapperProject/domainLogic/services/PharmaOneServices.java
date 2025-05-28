@@ -3,6 +3,7 @@ package com.aib.scrapperProject.domainLogic.services;
 
 import com.aib.scrapperProject.abstractedHTTP.AbstractionClient;
 import com.aib.scrapperProject.configurations.RedisManager;
+import com.aib.scrapperProject.domainLogic.model.GlobalCatalog;
 import com.aib.scrapperProject.domainLogic.model.pharmaOneModels.PharmaOneModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,14 +28,24 @@ public class PharmaOneServices {
     private final RedisManager redisManager;
     private final ObjectMapper mapper;
 
-    public List<PharmaOneModel> SearchByTerm(String termToSearch) {
+    private List<GlobalCatalog> translateFromFarmaciaSanNicolas(List<PharmaOneModel> origin) {
+        final List<GlobalCatalog> catalog = new ArrayList<>();
+        origin.forEach(sanNicolas -> catalog.add(GlobalCatalog.builder()
+                .imageURL(sanNicolas.getImage())
+                .priceProduct(Double.valueOf(sanNicolas.getPrice()))
+                .nameProduct(sanNicolas.getName()).build()));
+        return catalog;
+    }
+
+    public List<GlobalCatalog> SearchByTerm(String termToSearch) {
         final String url = "https://www.farmaciasannicolas.com/productos/keyword/" + termToSearch;// acetaminofen
         final Optional<String> cache = redisManager.getContent(url);
         if (cache.isPresent()) {
             final String root = cache.get();
             try {
-                return mapper.readerFor(new TypeReference<List<PharmaOneModel>>() {
+                final List<PharmaOneModel> products = mapper.readerFor(new TypeReference<List<PharmaOneModel>>() {
                 }).readValue(root);
+                return translateFromFarmaciaSanNicolas(products);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -60,7 +71,7 @@ public class PharmaOneServices {
         } finally {
             driver.close();
         }
-        return pharmaOne;
+        return translateFromFarmaciaSanNicolas(pharmaOne);
     }
 
 }

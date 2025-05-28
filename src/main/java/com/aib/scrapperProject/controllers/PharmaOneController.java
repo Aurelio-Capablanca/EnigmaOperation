@@ -1,5 +1,6 @@
 package com.aib.scrapperProject.controllers;
 
+import com.aib.scrapperProject.domainLogic.model.GlobalCatalog;
 import com.aib.scrapperProject.domainLogic.model.pharmaOneModels.PharmaOneModel;
 import com.aib.scrapperProject.domainLogic.services.PharmaOneServices;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class PharmaOneController {
     private final PharmaOneServices services;
 
     @GetMapping("/SanNicolas/search-term/{term}")
-    public ResponseEntity<List<PharmaOneModel>> searchByTermPharmaOne(@PathVariable String term) {
+    public ResponseEntity<List<GlobalCatalog>> searchByTermPharmaOne(@PathVariable String term) {
         return new ResponseEntity<>(services.SearchByTerm(term), HttpStatus.OK);
     }
 
