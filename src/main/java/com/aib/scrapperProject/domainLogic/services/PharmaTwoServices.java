@@ -35,14 +35,15 @@ public class PharmaTwoServices {
     }
 
 
-    public List<ProductsPharmaTwo> searchByTerm(String argument, int order, int page, int size) {
+    public List<GlobalCatalog> searchByTerm(String argument, int order, int page, int size) {
         final String url = "https://www.farmaciaseconomicaselsalvador.com/PROD/ECOMMERCE/API/Articulo/ObtenerArticulosPorNombre";
         final Optional<String> content = redisManager.getContent(url);
         if (content.isPresent()) {
             final String root = content.get();
             try {
-                return mapper.readerFor(new TypeReference<List<ProductsPharmaTwo>>() {
+                final List<ProductsPharmaTwo> products = mapper.readerFor(new TypeReference<List<ProductsPharmaTwo>>() {
                 }).readValue(root);
+                return translateFromFarmaciaEconomicas(products);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -66,6 +67,6 @@ public class PharmaTwoServices {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return catalog;
+        return translateFromFarmaciaEconomicas(catalog);
     }
 }
