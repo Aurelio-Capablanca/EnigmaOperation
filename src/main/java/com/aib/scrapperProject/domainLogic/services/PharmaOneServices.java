@@ -30,11 +30,11 @@ public class PharmaOneServices {
 
     private List<GlobalCatalog> translateFromFarmaciaSanNicolas(List<PharmaOneModel> origin) {
         final List<GlobalCatalog> catalog = new ArrayList<>();
-        origin.forEach(sanNicolas -> catalog.add(GlobalCatalog.builder()
-                .imageURL(sanNicolas.getImage())
-                .priceProduct(Double.valueOf(sanNicolas.getPrice()))
-                .nameProduct(sanNicolas.getName()).build()));
-        return catalog;
+        origin.forEach(sanNicolas -> {
+            final String price = sanNicolas.getPrice().replace("$","");
+            catalog.add(GlobalCatalog.builder().imageURL(sanNicolas.getImage())
+                    .priceProduct(Double.valueOf(price)).nameProduct(sanNicolas.getName()).build());
+        }); return catalog;
     }
 
     public List<GlobalCatalog> SearchByTerm(String termToSearch) {
@@ -56,12 +56,7 @@ public class PharmaOneServices {
             driver.get(url);
             final List<WebElement> toJson = driver.findElements(By.xpath("//div[@class='product-item-box']"));
             toJson.forEach(value -> {
-                pharmaOne.add(PharmaOneModel.builder()
-                        .image(value.findElement(By.cssSelector("figure > a > img")).getText())
-                        .name(value.findElement(By.cssSelector(".prod-info .prod-name a")).getText())
-                        .starterPrice(value.findElement(By.xpath("//div[@class='prices-top']//span[@class='before']")).getText())
-                        .price(value.findElement(By.xpath("//div[@class='prices-top']//strong[@class='price']")).getText())
-                        .build());
+                pharmaOne.add(PharmaOneModel.builder().image(value.findElement(By.cssSelector("figure > a > img")).getText()).name(value.findElement(By.cssSelector(".prod-info .prod-name a")).getText()).starterPrice(value.findElement(By.xpath("//div[@class='prices-top']//span[@class='before']")).getText()).price(value.findElement(By.xpath("//div[@class='prices-top']//strong[@class='price']")).getText()).build());
             });
             System.out.println("Content : " + pharmaOne);
             final String content = mapper.writeValueAsString(pharmaOne);
