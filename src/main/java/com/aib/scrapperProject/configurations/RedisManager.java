@@ -10,7 +10,6 @@ public class RedisManager {
 
     private final JedisPooled jedis;
 
-
     public RedisManager(){
         this.jedis = new JedisPooled("localhost",6379);
     }
